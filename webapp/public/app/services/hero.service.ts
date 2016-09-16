@@ -1,15 +1,17 @@
 import { Injectable }    from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Headers } from '@angular/http';
+import {AuthHttp} from 'angular2-jwt';
+import {AuthenticationService} from './authentication.service';
 
 import 'rxjs/add/operator/toPromise';
 
-import { Hero } from './hero';
+import { Hero } from '../classes/hero';
 
 @Injectable()
 export class HeroService {
-  private heroesUrl = 'app/heroes';  // URL to web api
+  private heroesUrl = 'api/heroes';  // URL to web api
 
-  constructor(private http: Http) { }
+  constructor(private http: AuthHttp,private authService: AuthenticationService) { }
   
   getHeroes(): Promise<Hero[]> {
     return this.http.get(this.heroesUrl)
@@ -27,8 +29,8 @@ export class HeroService {
   return Promise.reject(error.message || error);
   }
   private post(hero: Hero): Promise<Hero> {
-  let headers = new Headers({
-    'Content-Type': 'application/json'});
+  let headers = this.authService.getAuthHeaders();
+  headers.append('Content-Type', 'application/json');
 
   return this.http
              .post(this.heroesUrl, JSON.stringify(hero), {headers: headers})
@@ -38,7 +40,7 @@ export class HeroService {
   }
   // Update existing Hero
   private put(hero: Hero) {
-  let headers = new Headers();
+  let headers = this.authService.getAuthHeaders();
   headers.append('Content-Type', 'application/json');
 
   let url = `${this.heroesUrl}/${hero.id}`;
@@ -50,7 +52,7 @@ export class HeroService {
              .catch(this.handleError);
   }
   delete(hero: Hero) {
-  let headers = new Headers();
+  let headers = this.authService.getAuthHeaders();
   headers.append('Content-Type', 'application/json');
 
   let url = `${this.heroesUrl}/${hero.id}`;

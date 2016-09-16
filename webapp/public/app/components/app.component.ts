@@ -1,24 +1,28 @@
 import { Component }       from '@angular/core';
-import { HeroService }     from './hero.service';
-import {AuthenticationService} from './authentication.service';
 import { HeroDetailComponent } from './hero-detail.component';
+import { HeroService }     from '../services/hero.service';
+import { AuthenticationService }     from '../services/authentication.service';
 import { HeroesComponent } from './heroes.component';
 import { LoginComponent } from './login.component';
+import { LogoutComponent } from './logout.component';
 import { DashboardComponent } from './dashboard.component';
 import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router-deprecated';
+import {tokenNotExpired} from 'angular2-jwt';
 
 @Component({
   selector: 'my-app',
  template: `
   <h1>{{title}}</h1>
   <nav>
-    <a [routerLink]="['Dashboard']">Dashboard</a>
-    <a [routerLink]="['Heroes']">Heroes</a>
-    <a (click)="logout()" href="#">Logout</a>
+    <a [routerLink]="['Dashboard']" >Dashboard</a>
+    <a [routerLink]="['Heroes']"  >Heroes</a>
+    <a [routerLink]="['Logout']" *ngIf="loggedIn()">Log Out</a>
+    <a [routerLink]="['Login']" *ngIf="!loggedIn()">Log In</a>
+    
   </nav>
   <router-outlet></router-outlet>
 `,
-   styleUrls: ['app/app.component.css'],
+   styleUrls: ['app/styles/app.component.css'],
  directives: [ROUTER_DIRECTIVES],
 providers: [
   ROUTER_PROVIDERS,
@@ -34,14 +38,19 @@ providers: [
   useAsDefault: true
 },
 {
+    path: '/heroes',
+    name: 'Heroes',
+    component: HeroesComponent
+  },
+  {
     path: '/login',
     name: 'Login',
     component: LoginComponent
   },
-  {
-    path: '/heroes',
-    name: 'Heroes',
-    component: HeroesComponent
+   {
+    path: '/logout',
+    name: 'Logout',
+    component: LogoutComponent
   },
   {
   path: '/detail/:id',
@@ -51,10 +60,8 @@ providers: [
 ])
 export class AppComponent {
   title = 'Tour of Heroes';
-  constructor(
-  private authService: AuthenticationService) {}
-  
-  logout() {
-        this.authService.logout();
-    }
+ 
+ loggedIn(){
+   return tokenNotExpired();
+ }
 }

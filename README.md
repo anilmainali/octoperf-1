@@ -12,8 +12,8 @@
 
 Hi there! Welcome to the OctoPerf tutorial!
 
-webapp: sample web application under test
-records: network recordings of navigation on the webapp
-    - heroes.har: login, then display of the heroes list then logout
+webapp: sample web application under test  
+records: network recordings of navigation on the webapp  
+    - heroes.har: welcome page, then display of the heroes list with the api 
 
 Happy learning!
